@@ -1,0 +1,15 @@
+services:
+  osr-resolve-dev:
+    image: ghcr.io/yifen9/osr-resolve-dev
+    build:
+      context: ..
+      dockerfile: Dockerfile.dev
+    container_name: osr-resolve-dev
+    working_dir: /workspace
+    volumes:
+      - "..:/workspace"
+    command: >
+      bash -lc "
+        just init &&
+        exec sleep infinity
+      "

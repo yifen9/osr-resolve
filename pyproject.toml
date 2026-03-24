@@ -1,0 +1,24 @@
+[project]
+name = "osr-resolve"
+version = "0.0.0"
+requires-python = ">=3.11"
+dependencies = [
+    "osr-pycore",
+]
+
+[dependency-groups]
+dev = [
+    "pdoc>=16.0.0",
+    "pytest>=9.0.2",
+    "ruff>=0.15.4",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.uv.sources]
+osr-pycore = { git = "https://github.com/yifen9/osr-pycore", rev = "67f8b19" }
