@@ -59,3 +59,14 @@ docs-build:
 
 docs-serve:
     uv run pdoc --math -p 8080 osr_resolve
+
+find-last D:
+    uv run python src/osr_resolve/tools/find_last.py {{D}}
+
+SCRIPTS_ORCID_DATE := "2025_12_17"
+
+pl-orcid-0001 S="src" D=SCRIPTS_ORCID_DATE U="data/pipeline/orcid/0000_raw" O="data/pipeline/orcid/0001_meta" I="data/external/orcid" C="config/pipeline/orcid/0001.yaml":
+    uv run python scripts/pipeline/orcid/0001.py {{S}} {{D}} "$(just find-last {{U}})" {{O}} {{I}} {{C}}
+
+pl-orcid-0001-s S="src" D=SCRIPTS_ORCID_DATE U="samples/pipeline/orcid/65536_0/0000_raw" O="samples/pipeline/orcid/65536_0/0001_meta" I="data/external/orcid" C="config/pipeline/orcid/0001.yaml":
+    uv run python scripts/pipeline/orcid/0001.py {{S}} {{D}} "$(just find-last {{U}})" {{O}} {{I}} {{C}}

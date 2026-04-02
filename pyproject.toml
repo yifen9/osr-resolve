@@ -21,4 +21,4 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.uv.sources]
-osr-pycore = { git = "https://github.com/yifen9/osr-pycore", rev = "67f8b19" }
+osr-pycore = { git = "https://github.com/yifen9/osr-pycore", rev = "main" }

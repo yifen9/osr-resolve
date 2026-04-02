@@ -138,8 +138,8 @@ wheels = [
 
 [[package]]
 name = "osr-pycore"
-version = "0.1.0"
-source = { git = "https://github.com/yifen9/osr-pycore?rev=67f8b19#67f8b19d2e6c1bccd1cb07ef3f8af99851ff1b5c" }
+version = "0.1.2"
+source = { git = "https://github.com/yifen9/osr-pycore?rev=main#8dcf193169e70c031fd139ec6a8b48d2767ab809" }
 dependencies = [
     { name = "pyarrow" },
     { name = "pyyaml" },
@@ -162,7 +162,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "osr-pycore", git = "https://github.com/yifen9/osr-pycore?rev=67f8b19" }]
+requires-dist = [{ name = "osr-pycore", git = "https://github.com/yifen9/osr-pycore?rev=main" }]
 
 [package.metadata.requires-dev]
 dev = [
