@@ -1,0 +1,9 @@
+component: "orcid/0010_resolve_org_country"
+input_stage_root: "pipeline/10g_match_agg_aff_org_country"
+input_subdir_match: "match_org_country"
+output_subdir_resolve: "resolve_org_country"
+output_subdir_map: "map_org_country_match_resolve"
+target_part_size_mb: 4
+batch_rows: 65536
+compression: "zstd"
+compression_level: 22

@@ -5,22 +5,10 @@ from importlib import import_module
 from pathlib import Path
 
 from osr_pycore.io.yaml import read_yaml
-from osr_pycore.utils.versioner import index_dir, list_metas
-
-
-def _require_last_dir(path: str) -> str:
-    metas = list_metas(path)
-    if not metas:
-        raise FileNotFoundError(f"no version dirs under {path}")
-    metas.sort(key=lambda x: x["timestamp"], reverse=True)
-    d = index_dir(path, metas[0])
-    if d is None:
-        raise FileNotFoundError(f"cannot index last meta under {path}")
-    return d
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="pl_orcid_0010_run")
+    p = argparse.ArgumentParser(prog="pl_geonames_0010_run")
     p.add_argument("src")
     p.add_argument("date")
     p.add_argument("upstream")
@@ -33,21 +21,17 @@ def _build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     ns = _build_parser().parse_args(argv)
     cfg = read_yaml(ns.config)
-    input_stage_root = str(
-        (Path(ns.input_root) / ns.date / cfg["input_stage_root"]).resolve()
-    )
-    input_dir = _require_last_dir(input_stage_root)
-    mod = import_module("osr_resolve.pipeline.orcid.0010")
-    out = mod.pl_orcid_0010_run(
+    input_dir = str((Path(ns.input_root) / ns.date).resolve())
+    mod = import_module("osr_resolve.pipeline.geonames.0010")
+    out = mod.pl_geonames_0010_run(
         upstreams=[str(Path(ns.upstream).resolve()), input_dir],
         input_dir=input_dir,
         output_root=ns.output_root,
         src=ns.src,
         script_path=str(Path(__file__).resolve()),
         component=cfg["component"],
-        input_subdir_match=cfg["input_subdir_match"],
-        output_subdir_resolve=cfg["output_subdir_resolve"],
-        output_subdir_map=cfg["output_subdir_map"],
+        input_file=cfg["input_file"],
+        output_subdir_city=cfg["output_subdir_city"],
         target_part_size_mb=cfg["target_part_size_mb"],
         batch_rows=cfg["batch_rows"],
         compression=cfg["compression"],

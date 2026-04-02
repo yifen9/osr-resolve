@@ -63,10 +63,23 @@ docs-serve:
 find-last D:
     uv run python src/osr_resolve/tools/find_last.py {{D}}
 
+SCRIPTS_GEONAMES_DATE := "2024_03_10"
 SCRIPTS_ORCID_DATE := "2025_12_17"
 
+pl-gn-0001 S="src" D=SCRIPTS_GEONAMES_DATE U="data/pipeline/geonames/0000_raw" O="data/pipeline/geonames/0001_meta" I="data/external/geonames" C="config/pipeline/geonames/0001.yaml":
+    uv run python scripts/pipeline/geonames/0001.py {{S}} {{D}} {{U}} {{O}} {{I}} {{C}}
+
+pl-gn-0010 S="src" D=SCRIPTS_GEONAMES_DATE U="data/pipeline/geonames/0001_meta" O="data/pipeline/geonames/0010_partition" I="data/pipeline/geonames/0000_raw" C="config/pipeline/geonames/0010.yaml":
+    uv run python scripts/pipeline/geonames/0010.py {{S}} {{D}} {{U}} {{O}} {{I}} {{C}}
+
 pl-orcid-0001 S="src" D=SCRIPTS_ORCID_DATE U="data/pipeline/orcid/0000_raw" O="data/pipeline/orcid/0001_meta" I="data/external/orcid" C="config/pipeline/orcid/0001.yaml":
-    uv run python scripts/pipeline/orcid/0001.py {{S}} {{D}} "$(just find-last {{U}})" {{O}} {{I}} {{C}}
+    uv run python scripts/pipeline/orcid/0001.py {{S}} {{D}} {{U}} {{O}} {{I}} {{C}}
 
 pl-orcid-0001-s S="src" D=SCRIPTS_ORCID_DATE U="samples/pipeline/orcid/65536_0/0000_raw" O="samples/pipeline/orcid/65536_0/0001_meta" I="data/external/orcid" C="config/pipeline/orcid/0001.yaml":
-    uv run python scripts/pipeline/orcid/0001.py {{S}} {{D}} "$(just find-last {{U}})" {{O}} {{I}} {{C}}
+    uv run python scripts/pipeline/orcid/0001.py {{S}} {{D}} {{U}} {{O}} {{I}} {{C}}
+
+pl-orcid-0010 S="src" D=SCRIPTS_ORCID_DATE U="data/pipeline/orcid/0001_meta" O="data/pipeline/orcid/0010_resolve_org_country" I="data/pipeline/orcid/0000_raw" C="config/pipeline/orcid/0010.yaml":
+    uv run python scripts/pipeline/orcid/0010.py {{S}} {{D}} "$(just find-last {{U}})" {{O}} {{I}} {{C}}
+
+pl-orcid-0010-s S="src" D=SCRIPTS_ORCID_DATE U="samples/pipeline/orcid/65536_0/0001_meta" O="samples/pipeline/orcid/65536_0/0010_resolve_org_country" I="samples/pipeline/orcid/65536_0/0000_raw" C="config/pipeline/orcid/0010.yaml":
+    uv run python scripts/pipeline/orcid/0010.py {{S}} {{D}} "$(just find-last {{U}})" {{O}} {{I}} {{C}}

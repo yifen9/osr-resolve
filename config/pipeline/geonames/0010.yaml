@@ -1,0 +1,7 @@
+component: "geonames/0010_partition"
+input_file: "cities1000.parquet"
+output_subdir_city: "city"
+target_part_size_mb: 4
+batch_rows: 65536
+compression: "zstd"
+compression_level: 22
