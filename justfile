@@ -78,6 +78,15 @@ pl-gn-0020 S="src" U="data/pipeline/geonames/0010_partition" O="data/pipeline/ge
 pl-gn-0030 S="src" U="data/pipeline/geonames/0020_rename" O="data/pipeline/geonames/0030_drop" I="data/pipeline/geonames/0020_rename" C="config/pipeline/geonames/0030.yaml":
     uv run python scripts/pipeline/geonames/0030.py {{S}} "$(just find-last {{U}})" {{O}} {{I}} {{C}}
 
+pl-gn-0040 S="src" U="data/pipeline/geonames/0030_drop" O="data/pipeline/geonames/0040_alias" I="data/pipeline/geonames/0030_drop" C="config/pipeline/geonames/0040.yaml":
+    uv run python scripts/pipeline/geonames/0040.py {{S}} "$(just find-last {{U}})" {{O}} {{I}} {{C}}
+
+pl-gn-0050 S="src" U="data/pipeline/geonames/0040_alias" O="data/pipeline/geonames/0050_normalize" I="data/pipeline/geonames/0040_alias" C="config/pipeline/geonames/0050.yaml":
+    uv run python scripts/pipeline/geonames/0050.py {{S}} "$(just find-last {{U}})" {{O}} {{I}} {{C}}
+
+pl-gn-0060 S="src" U="data/pipeline/geonames/0050_normalize" O="data/pipeline/geonames/0060_index" I="data/pipeline/geonames/0050_normalize" C="config/pipeline/geonames/0060.yaml":
+    uv run python scripts/pipeline/geonames/0060.py {{S}} "$(just find-last {{U}})" {{O}} {{I}} {{C}}
+
 pl-orcid-0001 S="src" D=SCRIPTS_ORCID_DATE U="data/pipeline/orcid/0000_raw" O="data/pipeline/orcid/0001_meta" I="data/external/orcid" C="config/pipeline/orcid/0001.yaml":
     uv run python scripts/pipeline/orcid/0001.py {{S}} {{D}} {{U}} {{O}} {{I}} {{C}}
 

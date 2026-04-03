@@ -1,0 +1,15 @@
+component: "geonames/0040_alias"
+input_subdir_city: "city"
+output_subdir_city: "city"
+output_subdir_alias: "alias"
+column_city_id: "city_id"
+column_name: "city_name"
+column_ascii: "city_name_ascii"
+column_alt: "city_name_alt"
+drop_columns_city:
+  - "city_name_ascii"
+  - "city_name_alt"
+target_part_size_mb_alias: 4
+batch_rows_alias: 65536
+compression: "zstd"
+compression_level: 22

@@ -20,7 +20,7 @@ def _require_last_dir(path: str) -> str:
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="pl_geonames_0020_run")
+    p = argparse.ArgumentParser(prog="pl_geonames_0040_run")
     p.add_argument("src")
     p.add_argument("upstream")
     p.add_argument("output_root")
@@ -33,8 +33,8 @@ def main(argv: list[str] | None = None) -> int:
     ns = _build_parser().parse_args(argv)
     cfg = read_yaml(ns.config)
     input_dir = _require_last_dir(ns.input_root)
-    mod = import_module("osr_resolve.pipeline.geonames.0020")
-    out = mod.pl_geonames_0020_run(
+    mod = import_module("osr_resolve.pipeline.geonames.0040")
+    out = mod.pl_geonames_0040_run(
         upstreams=[str(Path(ns.upstream).resolve()), input_dir],
         input_dir=input_dir,
         output_root=ns.output_root,
@@ -43,7 +43,14 @@ def main(argv: list[str] | None = None) -> int:
         component=cfg["component"],
         input_subdir_city=cfg["input_subdir_city"],
         output_subdir_city=cfg["output_subdir_city"],
-        rules=cfg["rules"],
+        output_subdir_alias=cfg["output_subdir_alias"],
+        column_city_id=cfg["column_city_id"],
+        column_name=cfg["column_name"],
+        column_ascii=cfg["column_ascii"],
+        column_alt=cfg["column_alt"],
+        drop_columns_city=cfg["drop_columns_city"],
+        target_part_size_mb_alias=cfg["target_part_size_mb_alias"],
+        batch_rows_alias=cfg["batch_rows_alias"],
         compression=cfg["compression"],
         compression_level=cfg["compression_level"],
     )

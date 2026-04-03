@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import pyarrow as pa
 from osr_pycore.io.parquet import read_parquet
 from osr_pycore.utils.audit import Audit
 from osr_pycore.utils.console import ConsoleSink
@@ -17,6 +16,7 @@ from osr_pycore.utils.versioner import build_version_dir
 from osr_resolve.tools.parquet_scan import list_part_paths, read_schema
 from osr_resolve.tools.parquet_write import write_part
 from osr_resolve.tools.stats_table import write_stats
+from osr_resolve.tools.table_rule import apply_rules
 
 
 @dataclass(frozen=True, slots=True)
@@ -60,15 +60,6 @@ def _subdir(path: str, name: str) -> str:
     return os.path.join(path, name)
 
 
-def _rename(table: pa.Table, rename_map: dict[str, str]) -> pa.Table:
-    cols = []
-    names = []
-    for name in table.column_names:
-        cols.append(table.column(name))
-        names.append(rename_map.get(name, name))
-    return pa.table(cols, names=names)
-
-
 def pl_geonames_0020_run(
     *,
     upstreams: list[str],
@@ -79,7 +70,7 @@ def pl_geonames_0020_run(
     component: str,
     input_subdir_city: str,
     output_subdir_city: str,
-    rename_map: dict[str, str],
+    rules: list[dict[str, Any]],
     compression: str,
     compression_level: int,
 ) -> PlGeonames0020Out:
@@ -103,7 +94,7 @@ def pl_geonames_0020_run(
         "output_root": output_root,
         "input_subdir_city": input_subdir_city,
         "output_subdir_city": output_subdir_city,
-        "rename_map": rename_map,
+        "rules": rules,
         "compression": compression,
         "compression_level": compression_level,
         "input_schema": [{"name": f.name, "type": str(f.type)} for f in schema],
@@ -133,7 +124,7 @@ def pl_geonames_0020_run(
 
         for index, part_path_in in enumerate(part_paths_in):
             table_in = read_parquet(part_path_in)
-            table_out = _rename(table_in, rename_map)
+            table_out = apply_rules(table_in, rules)
             part_path_out = write_part(
                 city_out,
                 table_out,

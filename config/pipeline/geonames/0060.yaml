@@ -1,0 +1,61 @@
+component: "geonames/0060_index"
+
+input_subdir_city: "city"
+input_subdir_alias: "alias"
+
+output_subdir_index: "index_city"
+output_subdir_map: "map_city_index"
+
+entry_rules_city:
+  - op: "keep"
+    columns:
+      - "city_id"
+      - "city_name_norm"
+      - "country_code"
+  - op: "rename"
+    map:
+      city_name_norm: "city_key_norm"
+
+entry_rules_alias:
+  - op: "keep"
+    columns:
+      - "city_id"
+      - "city_alias_norm"
+      - "alias_kind"
+  - op: "rename"
+    map:
+      city_alias_norm: "city_key_norm"
+
+index_rules:
+  - op: "append_hash"
+    inputs:
+      - "city_key_norm"
+    output: "city_key_id"
+    algo: "md5"
+
+map_rules:
+  - op: "append_hash"
+    inputs:
+      - "city_key_norm"
+    output: "city_key_id"
+    algo: "md5"
+  - op: "keep"
+    columns:
+      - "city_key_id"
+      - "city_id"
+      - "country_code"
+      - "source_kind"
+      - "alias_kind"
+
+column_index_norm: "city_key_norm"
+column_index_id: "city_key_id"
+column_index_n_city: "n_city"
+column_index_n_row: "n_row"
+
+value_source_kind_city: "city"
+value_source_kind_alias: "alias"
+
+target_part_size_mb: 128
+batch_rows: 65536
+compression: "zstd"
+compression_level: 22

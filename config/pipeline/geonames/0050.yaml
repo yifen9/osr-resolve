@@ -1,0 +1,15 @@
+component: "geonames/0050_normalize"
+input_subdir_city: "city"
+input_subdir_alias: "alias"
+output_subdir_city: "city"
+output_subdir_alias: "alias"
+rules_city:
+  - op: "append_norm"
+    input: "city_name"
+    output: "city_name_norm"
+rules_alias:
+  - op: "append_norm"
+    input: "city_alias"
+    output: "city_alias_norm"
+compression: "zstd"
+compression_level: 22

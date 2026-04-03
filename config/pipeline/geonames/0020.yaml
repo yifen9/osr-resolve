@@ -1,12 +1,14 @@
 component: "geonames/0020_rename"
 input_subdir_city: "city"
 output_subdir_city: "city"
+rules:
+  - op: "rename"
+    map:
+      geoname_id: "city_id"
+      name: "city_name"
+      ascii_name: "city_name_ascii"
+      alternate_names: "city_name_alt"
+      modification_date: "modified_at"
+      coordinates: "coord_raw"
 compression: "zstd"
 compression_level: 22
-rename_map:
-  name: "city_name"
-  ascii_name: "city_name_ascii"
-  alternate_names: "city_name_alt"
-  geoname_id: "city_id"
-  modification_date: "modified_at"
-  coordinates: "coord_raw"

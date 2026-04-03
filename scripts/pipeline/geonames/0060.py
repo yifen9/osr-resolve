@@ -20,7 +20,7 @@ def _require_last_dir(path: str) -> str:
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="pl_geonames_0020_run")
+    p = argparse.ArgumentParser(prog="pl_geonames_0060_run")
     p.add_argument("src")
     p.add_argument("upstream")
     p.add_argument("output_root")
@@ -33,8 +33,8 @@ def main(argv: list[str] | None = None) -> int:
     ns = _build_parser().parse_args(argv)
     cfg = read_yaml(ns.config)
     input_dir = _require_last_dir(ns.input_root)
-    mod = import_module("osr_resolve.pipeline.geonames.0020")
-    out = mod.pl_geonames_0020_run(
+    mod = import_module("osr_resolve.pipeline.geonames.0060")
+    out = mod.pl_geonames_0060_run(
         upstreams=[str(Path(ns.upstream).resolve()), input_dir],
         input_dir=input_dir,
         output_root=ns.output_root,
@@ -42,8 +42,21 @@ def main(argv: list[str] | None = None) -> int:
         script_path=str(Path(__file__).resolve()),
         component=cfg["component"],
         input_subdir_city=cfg["input_subdir_city"],
-        output_subdir_city=cfg["output_subdir_city"],
-        rules=cfg["rules"],
+        input_subdir_alias=cfg["input_subdir_alias"],
+        output_subdir_index=cfg["output_subdir_index"],
+        output_subdir_map=cfg["output_subdir_map"],
+        entry_rules_city=cfg["entry_rules_city"],
+        entry_rules_alias=cfg["entry_rules_alias"],
+        index_rules=cfg["index_rules"],
+        map_rules=cfg["map_rules"],
+        column_index_norm=cfg["column_index_norm"],
+        column_index_id=cfg["column_index_id"],
+        column_index_n_city=cfg["column_index_n_city"],
+        column_index_n_row=cfg["column_index_n_row"],
+        value_source_kind_city=cfg["value_source_kind_city"],
+        value_source_kind_alias=cfg["value_source_kind_alias"],
+        target_part_size_mb=cfg["target_part_size_mb"],
+        batch_rows=cfg["batch_rows"],
         compression=cfg["compression"],
         compression_level=cfg["compression_level"],
     )

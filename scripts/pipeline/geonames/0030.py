@@ -43,7 +43,7 @@ def main(argv: list[str] | None = None) -> int:
         component=cfg["component"],
         input_subdir_city=cfg["input_subdir_city"],
         output_subdir_city=cfg["output_subdir_city"],
-        keep_columns=cfg["keep_columns"],
+        rules=cfg["rules"],
         compression=cfg["compression"],
         compression_level=cfg["compression_level"],
     )

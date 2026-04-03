@@ -20,10 +20,11 @@ from osr_resolve.tools.table_rule import apply_rules
 
 
 @dataclass(frozen=True, slots=True)
-class PlGeonames0030Out:
+class PlGeonames0050Out:
     run_dir: str
     meta: dict[str, Any]
     city_paths: list[str]
+    alias_paths: list[str]
     stats_path: str
 
 
@@ -60,7 +61,7 @@ def _subdir(path: str, name: str) -> str:
     return os.path.join(path, name)
 
 
-def pl_geonames_0030_run(
+def pl_geonames_0050_run(
     *,
     upstreams: list[str],
     input_dir: str,
@@ -69,11 +70,14 @@ def pl_geonames_0030_run(
     script_path: str,
     component: str,
     input_subdir_city: str,
+    input_subdir_alias: str,
     output_subdir_city: str,
-    rules: list[dict[str, Any]],
+    output_subdir_alias: str,
+    rules_city: list[dict[str, Any]],
+    rules_alias: list[dict[str, Any]],
     compression: str,
     compression_level: int,
-) -> PlGeonames0030Out:
+) -> PlGeonames0050Out:
     upstreams = _require_dirs(upstreams)
     input_dir = _require_dir(input_dir)
     output_root = os.path.abspath(output_root)
@@ -81,8 +85,13 @@ def pl_geonames_0030_run(
     script_path = _require_file(script_path)
 
     city_in = _require_dir(_subdir(input_dir, input_subdir_city))
-    schema = read_schema(city_in)
-    part_paths_in = list_part_paths(city_in)
+    alias_in = _require_dir(_subdir(input_dir, input_subdir_alias))
+
+    city_schema = read_schema(city_in)
+    alias_schema = read_schema(alias_in)
+
+    city_parts_in = list_part_paths(city_in)
+    alias_parts_in = list_part_paths(alias_in)
 
     repo_root = _repo_root_from_path(Path(script_path))
     env_path = _require_file(str(repo_root / "uv.lock"))
@@ -93,12 +102,21 @@ def pl_geonames_0030_run(
         "input_dir": input_dir,
         "output_root": output_root,
         "input_subdir_city": input_subdir_city,
+        "input_subdir_alias": input_subdir_alias,
         "output_subdir_city": output_subdir_city,
-        "rules": rules,
+        "output_subdir_alias": output_subdir_alias,
+        "rules_city": rules_city,
+        "rules_alias": rules_alias,
         "compression": compression,
         "compression_level": compression_level,
-        "input_schema": [{"name": f.name, "type": str(f.type)} for f in schema],
-        "n_input_parts": len(part_paths_in),
+        "n_input_city_parts": len(city_parts_in),
+        "n_input_alias_parts": len(alias_parts_in),
+        "input_city_schema": [
+            {"name": f.name, "type": str(f.type)} for f in city_schema
+        ],
+        "input_alias_schema": [
+            {"name": f.name, "type": str(f.type)} for f in alias_schema
+        ],
     }
 
     meta = build_meta(
@@ -118,13 +136,17 @@ def pl_geonames_0030_run(
             logger.info(jline("input", component, "upstream", path=upstream))
         logger.info(jline("input", component, "input_dir", path=input_dir))
         logger.info(jline("input", component, "city_in", path=city_in))
+        logger.info(jline("input", component, "alias_in", path=alias_in))
 
         city_out = _subdir(run_dir, output_subdir_city)
-        city_paths: list[str] = []
+        alias_out = _subdir(run_dir, output_subdir_alias)
 
-        for index, part_path_in in enumerate(part_paths_in):
+        city_paths: list[str] = []
+        alias_paths: list[str] = []
+
+        for index, part_path_in in enumerate(city_parts_in):
             table_in = read_parquet(part_path_in)
-            table_out = apply_rules(table_in, rules)
+            table_out = apply_rules(table_in, rules_city)
             part_path_out = write_part(
                 city_out,
                 table_out,
@@ -134,16 +156,30 @@ def pl_geonames_0030_run(
             )
             city_paths.append(part_path_out)
 
+        for index, part_path_in in enumerate(alias_parts_in):
+            table_in = read_parquet(part_path_in)
+            table_out = apply_rules(table_in, rules_alias)
+            part_path_out = write_part(
+                alias_out,
+                table_out,
+                index=index,
+                compression=compression,
+                compression_level=compression_level,
+            )
+            alias_paths.append(part_path_out)
+
         stats_path = write_stats(run_dir, logger=logger, component=component)
 
         logger.info(jline("output", component, "city_out", path=city_out))
+        logger.info(jline("output", component, "alias_out", path=alias_out))
         logger.info(jline("output", component, "stats", path=stats_path))
 
         audit.finish_success()
-        return PlGeonames0030Out(
+        return PlGeonames0050Out(
             run_dir=run_dir,
             meta=meta,
             city_paths=city_paths,
+            alias_paths=alias_paths,
             stats_path=stats_path,
         )
     except BaseException as e:
