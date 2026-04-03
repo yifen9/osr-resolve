@@ -16,7 +16,7 @@ from osr_pycore.utils.versioner import build_version_dir
 from osr_resolve.tools.parquet_scan import read_table
 from osr_resolve.tools.parquet_write import write_parts
 from osr_resolve.tools.stats_table import write_stats
-from osr_resolve.tools.table_rule import apply_rules
+from osr_resolve.tools.table_rule import apply_rules, append_const, append_null
 
 
 @dataclass(frozen=True, slots=True)
@@ -61,22 +61,6 @@ def _subdir(path: str, name: str) -> str:
     return os.path.join(path, name)
 
 
-def _append_const(table: pa.Table, *, output_col: str, value: str) -> pa.Table:
-    arr = pa.array([value] * table.num_rows, type=pa.string())
-    if output_col in table.column_names:
-        idx = table.column_names.index(output_col)
-        return table.set_column(idx, output_col, arr)
-    return table.append_column(output_col, arr)
-
-
-def _append_null(table: pa.Table, *, output_col: str) -> pa.Table:
-    arr = pa.array([None] * table.num_rows, type=pa.string())
-    if output_col in table.column_names:
-        idx = table.column_names.index(output_col)
-        return table.set_column(idx, output_col, arr)
-    return table.append_column(output_col, arr)
-
-
 def _build_entries(
     city_table: pa.Table,
     alias_table: pa.Table,
@@ -87,18 +71,14 @@ def _build_entries(
     value_source_kind_alias: str,
 ) -> pa.Table:
     city_entry = apply_rules(city_table, entry_rules_city)
-    city_entry = _append_const(
-        city_entry, output_col="source_kind", value=value_source_kind_city
-    )
+    city_entry = append_const(city_entry, output_col="source_kind", value=value_source_kind_city)
     if "alias_kind" not in city_entry.column_names:
-        city_entry = _append_null(city_entry, output_col="alias_kind")
+        city_entry = append_null(city_entry, output_col="alias_kind")
 
     alias_entry = apply_rules(alias_table, entry_rules_alias)
-    alias_entry = _append_const(
-        alias_entry, output_col="source_kind", value=value_source_kind_alias
-    )
+    alias_entry = append_const(alias_entry, output_col="source_kind", value=value_source_kind_alias)
     if "country_code" not in alias_entry.column_names:
-        alias_entry = _append_null(alias_entry, output_col="country_code")
+        alias_entry = append_null(alias_entry, output_col="country_code")
 
     return pa.concat_tables([city_entry, alias_entry], promote_options="default")
 
@@ -151,9 +131,7 @@ def _build_index(
         )
     table = apply_rules(table, index_rules)
     if column_index_id not in table.column_names:
-        raise ValueError(
-            f"missing index id column after index_rules: {column_index_id}"
-        )
+        raise ValueError(f"missing index id column after index_rules: {column_index_id}")
     return table
 
 

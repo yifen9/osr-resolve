@@ -1,0 +1,50 @@
+component: "orcid/0020_match_org_city_exact"
+
+input_stage_root_orcid: "pipeline/10f_match_agg_aff_org_city"
+input_subdir_orcid: "match_org_city"
+
+input_subdir_index: "index_city"
+input_subdir_map: "map_city_index"
+
+output_subdir_match: "match_org_city_exact"
+output_subdir_map: "map_org_city_exact"
+
+column_orcid_match_id: "org_city_match_id"
+column_orcid_norm: "org_city_norm"
+column_orcid_country: "org_country_norm"
+column_orcid_cnt: "cnt"
+
+column_index_id: "city_key_id"
+column_index_norm: "city_key_norm"
+
+column_map_index_id: "city_key_id"
+column_map_city_id: "city_id"
+column_map_country_code: "country_code"
+column_map_source_kind: "source_kind"
+column_map_alias_kind: "alias_kind"
+
+column_out_match_id: "org_city_match_id"
+column_out_norm: "org_city_norm"
+column_out_country: "org_country_norm"
+column_out_key_id: "city_key_id"
+column_out_n_candidate: "n_candidate"
+column_out_n_candidate_country: "n_candidate_country"
+column_out_status: "match_status"
+
+column_out_map_match_id: "org_city_match_id"
+column_out_map_city_id: "city_id"
+column_out_map_key_id: "city_key_id"
+column_out_map_country_code: "country_code"
+column_out_map_source_kind: "source_kind"
+column_out_map_alias_kind: "alias_kind"
+
+status_no_key: "no_key"
+status_key_only: "key_only"
+status_country_filtered_none: "country_filtered_none"
+status_country_filtered_unique: "country_filtered_unique"
+status_country_filtered_multi: "country_filtered_multi"
+
+target_part_size_mb: 4
+batch_rows: 65536
+compression: "zstd"
+compression_level: 22

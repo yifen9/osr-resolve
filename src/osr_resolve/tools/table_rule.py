@@ -73,6 +73,25 @@ def append_hash(
     return table.append_column(output_col, arr)
 
 
+def append_const(table: pa.Table, *, output_col: str, value: Any) -> pa.Table:
+    if isinstance(value, str):
+        arr = pa.array([value] * table.num_rows, type=pa.string())
+    else:
+        arr = pa.array([value] * table.num_rows)
+    if output_col in table.column_names:
+        idx = table.column_names.index(output_col)
+        return table.set_column(idx, output_col, arr)
+    return table.append_column(output_col, arr)
+
+
+def append_null(table: pa.Table, *, output_col: str) -> pa.Table:
+    arr = pa.array([None] * table.num_rows, type=pa.string())
+    if output_col in table.column_names:
+        idx = table.column_names.index(output_col)
+        return table.set_column(idx, output_col, arr)
+    return table.append_column(output_col, arr)
+
+
 def apply_rules(table: pa.Table, rules: list[dict[str, Any]]) -> pa.Table:
     out = table
     for rule in rules:
@@ -99,6 +118,19 @@ def apply_rules(table: pa.Table, rules: list[dict[str, Any]]) -> pa.Table:
                 input_cols=rule["inputs"],
                 output_col=rule["output"],
                 algo=rule["algo"],
+            )
+            continue
+        if op == "append_const":
+            out = append_const(
+                out,
+                output_col=rule["output"],
+                value=rule["value"],
+            )
+            continue
+        if op == "append_null":
+            out = append_null(
+                out,
+                output_col=rule["output"],
             )
             continue
         raise ValueError(f"unsupported rule op: {op}")

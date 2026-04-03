@@ -55,7 +55,7 @@ column_index_n_row: "n_row"
 value_source_kind_city: "city"
 value_source_kind_alias: "alias"
 
-target_part_size_mb: 128
+target_part_size_mb: 4
 batch_rows: 65536
 compression: "zstd"
 compression_level: 22

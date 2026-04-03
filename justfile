@@ -98,3 +98,9 @@ pl-orcid-0010 S="src" D=SCRIPTS_ORCID_DATE U="data/pipeline/orcid/0001_meta" O="
 
 pl-orcid-0010-s S="src" D=SCRIPTS_ORCID_DATE U="samples/pipeline/orcid/65536_0/0001_meta" O="samples/pipeline/orcid/65536_0/0010_resolve_org_country" I="samples/pipeline/orcid/65536_0/0000_raw" C="config/pipeline/orcid/0010.yaml":
     uv run python scripts/pipeline/orcid/0010.py {{S}} {{D}} "$(just find-last {{U}})" {{O}} {{I}} {{C}}
+
+pl-orcid-0020 S="src" D=SCRIPTS_ORCID_DATE UO="data/pipeline/orcid/0001_meta" UG="data/pipeline/geonames/0060_index" O="data/pipeline/orcid/0020_match_org_city_exact" IO="data/pipeline/orcid/0000_raw" IG="data/pipeline/geonames/0060_index" C="config/pipeline/orcid/0020.yaml":
+    uv run python scripts/pipeline/orcid/0020.py {{S}} {{D}} "$(just find-last {{UO}})" "$(just find-last {{UG}})" {{O}} {{IO}} {{IG}} {{C}}
+
+pl-orcid-0020-s S="src" D=SCRIPTS_ORCID_DATE UO="samples/pipeline/orcid/65536_0/0001_meta" UG="data/pipeline/geonames/0060_index" O="samples/pipeline/orcid/65536_0/0020_match_org_city_exact" IO="samples/pipeline/orcid/65536_0/0000_raw" IG="data/pipeline/geonames/0060_index" C="config/pipeline/orcid/0020.yaml":
+    uv run python scripts/pipeline/orcid/0020.py {{S}} {{D}} "$(just find-last {{UO}})" "$(just find-last {{UG}})" {{O}} {{IO}} {{IG}} {{C}}
